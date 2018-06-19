@@ -1,4 +1,4 @@
-export function tokenize(input) {
+function tokenize(input) {
   const WHITESPACE = /^[^\n\S]+/;
   const COMMENT = /^#[^\S\n]*([^\n]*)\n?/;
   const HEADER = /^[^\S\n]*#@[^\S\n]+([^\n]*)\n?/;
@@ -91,7 +91,7 @@ export function tokenize(input) {
   return tokens;
 }
 
-export function parse(tokens) {
+function parse(tokens) {
   const tree = [];
   let section;
   let block;
@@ -130,7 +130,7 @@ export function parse(tokens) {
   return tree;
 }
 
-export function mergeBlock(target, source) {
+function mergeBlock(target, source) {
   return {
     ...target,
     lines: source.lines.reduce((lines, line) => {
@@ -145,7 +145,7 @@ export function mergeBlock(target, source) {
   };
 }
 
-export function mergeSection(target, source, { mergeBlocks }) {
+function mergeSection(target, source, { mergeBlocks }) {
   return {
     ...target,
     blocks: source.blocks.reduce((blocks, block) => {
@@ -173,14 +173,16 @@ function extractOptions(args) {
   return [ args ];
 }
 
-export function merge(target, ...args) {
+function merge(target, ...args) {
   const [ sources, options ] = extractOptions(args);
 
   function _merge(target, sources, {
     mergeSections = true,
     mergeBlocks = true,
   } = {}) {
+    debugger
     return sources.reduce((target, source) => {
+    debugger
       return source.reduce((target, section) => {
         // Identify matching a target section.
         const targetSection = mergeSections ? target.find(item => {
@@ -250,7 +252,7 @@ function compile(tree, { sort = true } = {}) {
   }).join('\n\n');
 }
 
-export default function(...args) {
+module.exports = function(...args) {
   const [ sources, options ] = extractOptions(args);
   const parsed = sources.map(source => parse(tokenize(source)));
   const merged = merge(...parsed, options);
